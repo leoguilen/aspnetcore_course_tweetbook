@@ -43,6 +43,9 @@ namespace Tweetbook.Services
         {
             var post = await GetPostByIdAsync(postId);
 
+            if (post == null)
+                return false;
+
             _context.Posts.Remove(post);
             var deleted = await _context.SaveChangesAsync();
             return deleted > 0;
