@@ -27,5 +27,11 @@ namespace Tweetbook.Controllers.V1
             return Ok(_posts);
         }
 
+        [HttpPost(ApiRoutes.Posts.Create)]
+        public IActionResult Create()
+        {
+            return Ok();
+        }
+
     }
 }
