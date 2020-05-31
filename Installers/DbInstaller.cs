@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tweetbook.Services;
 using TweetBook.Data;
 
 namespace Tweetbook.Installers
@@ -10,11 +11,13 @@ namespace Tweetbook.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<DataContext>(opts =>
-                opts.UseSqlServer(
-                    configuration.GetConnectionString("")));
+            services.AddDbContext<DataContext>(opts => opts.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddScoped<IPostService, PostService>();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Tweetbook.Domain
+namespace Tweetbook.Contracts.V1.Response
 {
-    public class Post
+    public class PostResponse
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
