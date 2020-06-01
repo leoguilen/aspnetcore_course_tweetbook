@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
@@ -9,6 +11,7 @@ using Tweetbook.Services;
 
 namespace Tweetbook.Controllers.V1
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class PostsController : ControllerBase
     {
@@ -46,7 +49,7 @@ namespace Tweetbook.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-            var response = new PostResponse { Id = post.Id };
+            var response = new PostResponse { Id = post.Id, Name = post.Name };
 
             return Created(locationUrl, response);
         }

@@ -38,10 +38,11 @@ namespace TweetBook
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseAuthentication();
-
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             var swaggerOpts = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOpts);
 
