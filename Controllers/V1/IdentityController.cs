@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Request;
@@ -20,6 +21,15 @@ namespace Tweetbook.Controllers.V1
         [HttpPost(ApiRoutes.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest registrationRequest)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = ModelState.Values.SelectMany(x => 
+                        x.Errors.Select(e => e.ErrorMessage))
+                });
+            }
+
             var authResponse = await _identityService.RegisterAsync(registrationRequest.Email, registrationRequest.Password);
 
             if(!authResponse.Success)
