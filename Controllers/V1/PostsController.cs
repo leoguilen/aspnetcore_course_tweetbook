@@ -45,7 +45,8 @@ namespace Tweetbook.Controllers.V1
         {
             var post = new Post
             {
-                Name = postRequest.Name
+                Name = postRequest.Name,
+                UserId = HttpContext.GetUserId()
             };
 
             await _postService.CreatePostAsync(post);
