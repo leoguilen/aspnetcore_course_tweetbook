@@ -9,6 +9,7 @@ namespace TweetBook.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
