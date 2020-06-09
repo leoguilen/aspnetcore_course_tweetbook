@@ -1,17 +1,119 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj": {}
+    "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj": {}
   },
   "projects": {
-    "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj": {
+    "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj",
-        "projectName": "Tweetbook",
-        "projectPath": "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj",
+        "projectUniqueName": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
+        "projectName": "Tweetbook.IntegrationTests",
+        "projectPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
         "packagesPath": "C:\\Users\\Leonardo Cruz Guilen\\.nuget\\packages\\",
-        "outputPath": "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\obj\\",
+        "outputPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Leonardo Cruz Guilen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj": {
+                "projectPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[5.10.3, )"
+            },
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[5.2.7, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.2.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj",
+        "projectName": "Tweetbook",
+        "projectPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj",
+        "packagesPath": "C:\\Users\\Leonardo Cruz Guilen\\.nuget\\packages\\",
+        "outputPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -84,108 +186,6 @@
             "Swashbuckle.AspNetCore.SwaggerUI": {
               "target": "Package",
               "version": "[5.4.1, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
-        "projectName": "Tweetbook.IntegrationTests",
-        "projectPath": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
-        "packagesPath": "C:\\Users\\Leonardo Cruz Guilen\\.nuget\\packages\\",
-        "outputPath": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\obj\\",
-        "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
-        "configFilePaths": [
-          "C:\\Users\\Leonardo Cruz Guilen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "netcoreapp3.1"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netcoreapp3.1": {
-            "projectReferences": {
-              "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj": {
-                "projectPath": "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "netcoreapp3.1": {
-          "dependencies": {
-            "FluentAssertions": {
-              "target": "Package",
-              "version": "[5.10.3, )"
-            },
-            "Microsoft.AspNet.WebApi.Client": {
-              "target": "Package",
-              "version": "[5.2.7, )"
-            },
-            "Microsoft.AspNetCore.Mvc.Testing": {
-              "target": "Package",
-              "version": "[3.1.4, )"
-            },
-            "Microsoft.EntityFrameworkCore.InMemory": {
-              "target": "Package",
-              "version": "[3.1.4, )"
-            },
-            "Microsoft.Extensions.DependencyInjection": {
-              "target": "Package",
-              "version": "[3.1.4, )"
-            },
-            "Microsoft.NET.Test.Sdk": {
-              "target": "Package",
-              "version": "[16.2.0, )"
-            },
-            "coverlet.collector": {
-              "target": "Package",
-              "version": "[1.0.1, )"
-            },
-            "xunit": {
-              "target": "Package",
-              "version": "[2.4.0, )"
-            },
-            "xunit.runner.visualstudio": {
-              "target": "Package",
-              "version": "[2.4.0, )"
             }
           },
           "imports": [

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\dotnetcore3.1_tweetbook\Tweetbook.csproj" />
+    <ProjectReference Include="..\Tweetbook\Tweetbook.csproj" />
   </ItemGroup>
 
 </Project>

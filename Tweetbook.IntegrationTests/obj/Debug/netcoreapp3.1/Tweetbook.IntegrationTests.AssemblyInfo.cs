@@ -12,7 +12,7 @@ using System;
 using System.Reflection;
 
 [assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap4")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Tweetbook, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook", "Tweetbook.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Tweetbook, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook", "Tweetbook.csproj", "0")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tweetbook.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]

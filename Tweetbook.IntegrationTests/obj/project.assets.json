@@ -11044,8 +11044,8 @@
     },
     "Tweetbook/1.0.0": {
       "type": "project",
-      "path": "../dotnetcore3.1_tweetbook/Tweetbook.csproj",
-      "msbuildProject": "../dotnetcore3.1_tweetbook/Tweetbook.csproj"
+      "path": "../Tweetbook/Tweetbook.csproj",
+      "msbuildProject": "../Tweetbook/Tweetbook.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -11070,11 +11070,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
+      "projectUniqueName": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
       "projectName": "Tweetbook.IntegrationTests",
-      "projectPath": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
+      "projectPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\Tweetbook.IntegrationTests.csproj",
       "packagesPath": "C:\\Users\\Leonardo Cruz Guilen\\.nuget\\packages\\",
-      "outputPath": "D:\\Git\\Tweetbook\\Tweetbook.IntegrationTests\\obj\\",
+      "outputPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook.IntegrationTests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -11095,8 +11095,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj": {
-              "projectPath": "D:\\Git\\Tweetbook\\dotnetcore3.1_tweetbook\\Tweetbook.csproj"
+            "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj": {
+              "projectPath": "D:\\Git\\Nova pasta\\dotnetcore3.1_tweetbook\\Tweetbook\\Tweetbook.csproj"
             }
           }
         }
