@@ -7,7 +7,7 @@ using Tweetbook.Services;
 
 namespace Tweetbook.Controllers.V1
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Poster")]
     public class TagsController : Controller
     {
         private readonly IPostService _postService;
@@ -18,7 +18,6 @@ namespace Tweetbook.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tags.GetAll)]
-        [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _postService.GetAllTagsAsync());

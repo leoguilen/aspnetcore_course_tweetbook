@@ -17,14 +17,17 @@ namespace Tweetbook.Services
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _context;
 
         public IdentityService(UserManager<IdentityUser> userManager, JwtSettings jwtSettings,
-            TokenValidationParameters tokenValidationParameters, DataContext context)
+            TokenValidationParameters tokenValidationParameters, RoleManager<IdentityRole> roleManager,
+            DataContext context)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _jwtSettings = jwtSettings;
             _tokenValidationParameters = tokenValidationParameters;
             _context = context;
@@ -129,8 +132,10 @@ namespace Tweetbook.Services
             }
 
             // Add autorização do usuário registrado acessar o endpoint de tags
-            await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
-            
+            // await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
+
+            await _userManager.AddToRoleAsync(newUser, "admin");
+
             return await GenerateAuthenticationResultForUserAsync(newUser);
         }
 
@@ -146,11 +151,8 @@ namespace Tweetbook.Services
                     return null;
 
                 return principal;
-            }
-            catch
-            {
-                return null;
-            }
+            } 
+            catch { return null; }
         }
 
         private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validadedToken)
@@ -173,8 +175,27 @@ namespace Tweetbook.Services
                 new Claim("id", user.Id),
             };
 
+            // Busca todas as claims do usuario para add no token
             var userClaims = await _userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
+
+            // Busca claims de cada role para add no token
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                var role = await _roleManager.FindByNameAsync(userRole);
+                if (role == null) continue;
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+                foreach (var roleClaim in roleClaims)
+                {
+                    if (claims.Contains(roleClaim))
+                        continue;
+
+                    claims.Add(roleClaim);
+                }
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

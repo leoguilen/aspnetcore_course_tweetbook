@@ -10,7 +10,8 @@ namespace TweetBook
         {
             CreateHostBuilder(args)
                 .Build()
-                .MigrateDatabase()
+                .MigrateDatabase().Result
+                .CreateRoles().Result
                 .Run();
         }
 
