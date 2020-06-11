@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Request;
@@ -43,10 +45,14 @@ namespace Tweetbook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public async Task<IActionResult> Create([FromBody] CreatePostRequest postRequest)
         {
+            var newPostId = Guid.NewGuid();
             var post = new Post
             {
+                Id = newPostId,
                 Name = postRequest.Name,
-                UserId = HttpContext.GetUserId()
+                UserId = HttpContext.GetUserId(),
+                Tags = postRequest.Tags.Select(x => 
+                    new PostTag { PostId = newPostId, TagName = x }).ToList()
             };
 
             await _postService.CreatePostAsync(post);
@@ -54,7 +60,15 @@ namespace Tweetbook.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-            var response = new PostResponse { Id = post.Id, Name = post.Name };
+            var tagsResponse = new List<TagResponse>();
+
+            post.Tags.ForEach(postTag => { 
+                tagsResponse.Add(new TagResponse { 
+                    Name = postTag.TagName 
+                }); 
+            });
+
+            var response = new PostResponse { Id = post.Id, Name = post.Name, UserId = post.UserId, Tags = tagsResponse };
 
             return Created(locationUrl, response);
         }

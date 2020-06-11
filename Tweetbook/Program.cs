@@ -1,23 +1,17 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
-using TweetBook.Data;
+using Tweetbook.Data;
 
 namespace TweetBook
 {
-    public class Program
+    public static class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-
-            using var serviceScope = host.Services.CreateScope();
-            var dbContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
-            await dbContext.Database.MigrateAsync();
-
-            await host.RunAsync();
+            CreateHostBuilder(args)
+                .Build()
+                .MigrateDatabase()
+                .Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

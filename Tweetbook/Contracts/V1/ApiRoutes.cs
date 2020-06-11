@@ -21,5 +21,10 @@
             public const string Register = "/identity/register";
             public const string Refresh = "/identity/refresh";
         }
+
+        public static class Tags
+        {
+            public const string GetAll = Base + "/tags";
+        }
     }
 }
