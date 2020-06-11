@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -33,17 +34,17 @@ namespace Tweetbook.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if(user == null)
+            if (user == null)
             {
                 return new AuthenticationResult
                 {
-                    Errors = new[] {"User does not exist"}
+                    Errors = new[] { "User does not exist" }
                 };
             }
 
             var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
 
-            if(!userHasValidPassword)
+            if (!userHasValidPassword)
             {
                 return new AuthenticationResult
                 {
@@ -59,15 +60,15 @@ namespace Tweetbook.Services
             var validatedToken = GetPrincipalFromToken(token);
 
             if (validatedToken == null)
-                return new AuthenticationResult { Errors = new[] { "Invalid Token" }};
+                return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
 
-            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => 
+            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x =>
                 x.Type == JwtRegisteredClaimNames.Exp).Value);
             var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 .AddSeconds(expiryDateUnix);
 
             if (expiryDateTimeUtc > DateTime.UtcNow)
-                return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" }};
+                return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
 
             var jti = validatedToken.Claims.Single(x =>
                 x.Type == JwtRegisteredClaimNames.Jti).Value;
@@ -75,16 +76,16 @@ namespace Tweetbook.Services
             var storeRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
 
             if (storeRefreshToken == null)
-                return new AuthenticationResult { Errors = new[] { "This refresh token does not exist" }};
+                return new AuthenticationResult { Errors = new[] { "This refresh token does not exist" } };
 
             if (DateTime.UtcNow > storeRefreshToken.ExpiryDate)
-                return new AuthenticationResult { Errors = new[] { "This refresh token has expired" }};
+                return new AuthenticationResult { Errors = new[] { "This refresh token has expired" } };
 
             if (storeRefreshToken.Invalidated)
-                return new AuthenticationResult { Errors = new[] { "This refresh token has been invalidated" }};
+                return new AuthenticationResult { Errors = new[] { "This refresh token has been invalidated" } };
 
             if (storeRefreshToken.Used)
-                return new AuthenticationResult { Errors = new[] { "This refresh token has been used" }};
+                return new AuthenticationResult { Errors = new[] { "This refresh token has been used" } };
 
             if (storeRefreshToken.JwtId != jti)
                 return new AuthenticationResult { Errors = new[] { "This refresh token does not match this JWT" } };
@@ -101,7 +102,7 @@ namespace Tweetbook.Services
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
-            if(existingUser != null)
+            if (existingUser != null)
             {
                 return new AuthenticationResult
                 {
@@ -109,15 +110,17 @@ namespace Tweetbook.Services
                 };
             }
 
+            var newUserId = Guid.NewGuid();
             var newUser = new IdentityUser
             {
+                Id = newUserId.ToString(),
                 Email = email,
                 UserName = email
             };
 
             var createdUser = await _userManager.CreateAsync(newUser, password);
-            
-            if(!createdUser.Succeeded)
+
+            if (!createdUser.Succeeded)
             {
                 return new AuthenticationResult
                 {
@@ -125,6 +128,9 @@ namespace Tweetbook.Services
                 };
             }
 
+            // Add autorização do usuário registrado acessar o endpoint de tags
+            await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
+            
             return await GenerateAuthenticationResultForUserAsync(newUser);
         }
 
@@ -135,12 +141,13 @@ namespace Tweetbook.Services
             try
             {
                 var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validadedToken);
-                
+
                 if (!IsJwtWithValidSecurityAlgorithm(validadedToken))
                     return null;
 
                 return principal;
-            } catch
+            }
+            catch
             {
                 return null;
             }
@@ -157,17 +164,23 @@ namespace Tweetbook.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("id", user.Id),
+            };
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("id", user.Id),
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
