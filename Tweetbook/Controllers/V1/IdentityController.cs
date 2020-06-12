@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
@@ -9,6 +10,8 @@ using Tweetbook.Services;
 namespace Tweetbook.Controllers.V1
 {
     [ApiController]
+    [AllowAnonymous]
+    [Produces("application/json")]
     public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityService;
@@ -18,7 +21,12 @@ namespace Tweetbook.Controllers.V1
             _identityService = identityService;
         }
 
+        /// <summary>
+        /// Register a new user in the system
+        /// </summary>
+        /// <response code="200">Register a new user in the system</response>
         [HttpPost(ApiRoutes.Identity.Register)]
+        [ProducesResponseType(typeof(AuthSuccessResponse), 200)]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest registrationRequest)
         {
             if(!ModelState.IsValid)

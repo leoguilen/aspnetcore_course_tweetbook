@@ -12,7 +12,7 @@ namespace Tweetbook.Mapping
             CreateMap<Post, PostResponse>()
                 .ForMember(dest => dest.Tags, opts => 
                     opts.MapFrom(src => src.Tags.Select(t => 
-                        new TagResponse { Name = src.Name}))
+                        new TagResponse { Name = t.TagName }))
                     );
 
             CreateMap<Tag, TagResponse>();
