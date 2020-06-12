@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
@@ -18,25 +20,19 @@ namespace Tweetbook.Controllers.V1
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
-            var postResponse = posts.Select(post => new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                UserId = post.UserId,
-                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
-            }).ToList();
-
-            return Ok(postResponse);
+            return Ok(_mapper.Map<List<PostResponse>>(posts));
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
@@ -47,13 +43,7 @@ namespace Tweetbook.Controllers.V1
             if (post == null)
                 return NotFound();
 
-            return Ok(new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                UserId = post.UserId,
-                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -74,15 +64,7 @@ namespace Tweetbook.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-            var response = new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                UserId = post.UserId,
-                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
-            };
-
-            return Created(locationUrl, response);
+            return Created(locationUrl, _mapper.Map<PostResponse>(post));
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
@@ -101,14 +83,8 @@ namespace Tweetbook.Controllers.V1
 
             var updated = await _postService.UpdatePostAsync(post);
 
-            if (updated)
-                return Ok(new PostResponse
-                {
-                    Id = post.Id,
-                    Name = post.Name,
-                    UserId = post.UserId,
-                    Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
-                });
+            if (updated) 
+                return Ok(_mapper.Map<PostResponse>(post));
 
             return NotFound();
         }
