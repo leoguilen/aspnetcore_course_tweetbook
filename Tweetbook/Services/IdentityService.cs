@@ -134,7 +134,7 @@ namespace Tweetbook.Services
             // Add autorização do usuário registrado acessar o endpoint de tags
             // await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
 
-            await _userManager.AddToRoleAsync(newUser, "admin");
+            await _userManager.AddToRoleAsync(newUser, "Admin");
 
             return await GenerateAuthenticationResultForUserAsync(newUser);
         }
