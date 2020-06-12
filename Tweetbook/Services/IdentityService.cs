@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Tweetbook.Domain;
 using Tweetbook.Options;
+using Tweetbook.Utils;
 using TweetBook.Data;
 
 namespace Tweetbook.Services
@@ -55,12 +53,13 @@ namespace Tweetbook.Services
                 };
             }
 
-            return await GenerateAuthenticationResultForUserAsync(user);
+            return await TokenUtils.GenerateAuthenticationResultForUserAsync(
+                user, _jwtSettings, _userManager, _context);
         }
 
         public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
         {
-            var validatedToken = GetPrincipalFromToken(token);
+            var validatedToken = TokenUtils.GetPrincipalFromToken(token, _tokenValidationParameters);
 
             if (validatedToken == null)
                 return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
@@ -98,7 +97,9 @@ namespace Tweetbook.Services
             await _context.SaveChangesAsync();
 
             var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
-            return await GenerateAuthenticationResultForUserAsync(user);
+
+            return await TokenUtils.GenerateAuthenticationResultForUserAsync(
+                user, _jwtSettings, _userManager, _context);
         }
 
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
@@ -136,93 +137,8 @@ namespace Tweetbook.Services
 
             await _userManager.AddToRoleAsync(newUser, "Admin");
 
-            return await GenerateAuthenticationResultForUserAsync(newUser);
-        }
-
-        private ClaimsPrincipal GetPrincipalFromToken(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validadedToken);
-
-                if (!IsJwtWithValidSecurityAlgorithm(validadedToken))
-                    return null;
-
-                return principal;
-            } 
-            catch { return null; }
-        }
-
-        private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validadedToken)
-        {
-            return (validadedToken is JwtSecurityToken jwtSecurityToken) &&
-                    jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                        StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(IdentityUser user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("id", user.Id),
-            };
-
-            // Busca todas as claims do usuario para add no token
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            claims.AddRange(userClaims);
-
-            // Busca claims de cada role para add no token
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var userRole in userRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, userRole));
-                var role = await _roleManager.FindByNameAsync(userRole);
-                if (role == null) continue;
-                var roleClaims = await _roleManager.GetClaimsAsync(role);
-
-                foreach (var roleClaim in roleClaims)
-                {
-                    if (claims.Contains(roleClaim))
-                        continue;
-
-                    claims.Add(roleClaim);
-                }
-            }
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            var refreshToken = new RefreshToken
-            {
-                JwtId = token.Id,
-                UserId = user.Id,
-                CreationDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(6)
-            };
-
-            await _context.RefreshTokens.AddAsync(refreshToken);
-            await _context.SaveChangesAsync();
-
-            return new AuthenticationResult
-            {
-                Success = true,
-                Token = tokenHandler.WriteToken(token),
-                RefreshToken = refreshToken.Token
-            };
+            return await TokenUtils.GenerateAuthenticationResultForUserAsync(
+                newUser, _jwtSettings, _userManager, _context);
         }
     }
 }
