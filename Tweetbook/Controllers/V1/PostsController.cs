@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
@@ -28,7 +27,16 @@ namespace Tweetbook.Controllers.V1
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+            var postResponse = posts.Select(post => new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                UserId = post.UserId,
+                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
+            }).ToList();
+
+            return Ok(postResponse);
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
@@ -39,7 +47,13 @@ namespace Tweetbook.Controllers.V1
             if (post == null)
                 return NotFound();
 
-            return Ok(post);
+            return Ok(new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                UserId = post.UserId,
+                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
+            });
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -51,7 +65,7 @@ namespace Tweetbook.Controllers.V1
                 Id = newPostId,
                 Name = postRequest.Name,
                 UserId = HttpContext.GetUserId(),
-                Tags = postRequest.Tags.Select(x => 
+                Tags = postRequest.Tags.Select(x =>
                     new PostTag { PostId = newPostId, TagName = x }).ToList()
             };
 
@@ -60,15 +74,13 @@ namespace Tweetbook.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-            var tagsResponse = new List<TagResponse>();
-
-            post.Tags.ForEach(postTag => { 
-                tagsResponse.Add(new TagResponse { 
-                    Name = postTag.TagName 
-                }); 
-            });
-
-            var response = new PostResponse { Id = post.Id, Name = post.Name, UserId = post.UserId, Tags = tagsResponse };
+            var response = new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                UserId = post.UserId,
+                Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
+            };
 
             return Created(locationUrl, response);
         }
@@ -79,8 +91,10 @@ namespace Tweetbook.Controllers.V1
             var userOwnsPost = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
 
             if (!userOwnsPost)
-                return BadRequest(new { 
-                    error = "You do not own this post" });
+                return BadRequest(new
+                {
+                    error = "You do not own this post"
+                });
 
             var post = await _postService.GetPostByIdAsync(postId);
             post.Name = postRequest.Name;
@@ -88,7 +102,13 @@ namespace Tweetbook.Controllers.V1
             var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
-                return Ok(post);
+                return Ok(new PostResponse
+                {
+                    Id = post.Id,
+                    Name = post.Name,
+                    UserId = post.UserId,
+                    Tags = post.Tags.Select(t => new TagResponse { Name = t.TagName })
+                });
 
             return NotFound();
         }

@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Request;
+using Tweetbook.Contracts.V1.Response;
 using Tweetbook.Domain;
 using Tweetbook.Extensions;
 using Tweetbook.Services;
@@ -24,7 +26,11 @@ namespace Tweetbook.Controllers.V1
         [HttpGet(ApiRoutes.Tags.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetAllTagsAsync());
+            var tags = await _postService.GetAllTagsAsync();
+            var tagResponse = tags.Select(t => 
+                new TagResponse { Name = t.Name }).ToList();
+
+            return Ok(tagResponse);
         }
 
         [HttpGet(ApiRoutes.Tags.Get)]
@@ -34,7 +40,7 @@ namespace Tweetbook.Controllers.V1
 
             if (tag == null) return NotFound();
 
-            return Ok(tag);
+            return Ok(new TagResponse { Name = tag.Name });
         }
 
         [HttpPost(ApiRoutes.Tags.Create)]
@@ -58,7 +64,7 @@ namespace Tweetbook.Controllers.V1
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.Tags.Get.Replace("{tagName}", newTag.Name);
-            return Created(locationUri, newTag);
+            return Created(locationUri, new TagResponse { Name = newTag.Name });
         }
 
         [HttpDelete(ApiRoutes.Tags.Delete)]
