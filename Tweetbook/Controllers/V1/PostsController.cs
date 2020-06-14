@@ -79,9 +79,6 @@ namespace Tweetbook.Controllers.V1
 
             await _postService.CreatePostAsync(post);
 
-            //var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            //var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
-
             var locationUrl = _uriService.GetPostUri(post.Id.ToString());
 
             return Created(locationUrl, new Response<PostResponse>(
