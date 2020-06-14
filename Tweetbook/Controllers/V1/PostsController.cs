@@ -35,10 +35,11 @@ namespace Tweetbook.Controllers.V1
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         [Cached(600)]
-        public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
+        public async Task<IActionResult> GetAll([FromQuery] GetAllPostsQuery query, [FromQuery] PaginationQuery paginationQuery)
         {
             var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
-            var posts = await _postService.GetPostsAsync(pagination);
+            var filter = _mapper.Map<GetAllPostsFilter>(query);
+            var posts = await _postService.GetPostsAsync(filter, pagination);
             var postsResponse = _mapper.Map<List<PostResponse>>(posts);
 
             if(pagination == null || pagination.PageNumber < 1 || pagination.PageSize < 1)
